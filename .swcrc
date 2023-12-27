@@ -19,5 +19,5 @@
     "lazy": false,
     "noInterop": false
   },
-  "sourceMaps": true
+  "sourceMaps": false
 }
