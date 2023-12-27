@@ -1,0 +1,51 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+       
+      # # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+        - uses: actions/checkout@v3
+        # Runs a single command using the runners shell
+        - name: Compiling and building production code
+          run:
+            yarn install;
+            yarn build;
+        - name: Preparing prerequisites for deployment
+          run:
+            touch ./id_rsa;
+            echo "${{secrets.SSH_PRIVATE_KEY}}" >> ./id_rsa;
+            chmod 600 ./id_rsa;
+
+        - name: Creating remote directories if they don't exist
+          run:
+            ssh -o StrictHostKeyChecking=accept-new -i ./id_rsa ${{secrets.SSH_USERNAME}}@${{secrets.SSH_ADDRESS}} -p 2024 'mkdir -p /home/gaurav/deployments; mkdir -p /home/gaurav/deployments/netflix-search-server; exit;';
+        - name: Copying pm2 config and build files
+          run:
+            scp -i ./id_rsa -P 2024 -rp ./build ${{secrets.SSH_USERNAME}}@${{secrets.SSH_ADDRESS}}:/home/gaurav/deployments/netflix-search-server/;
+            scp -i ./id_rsa -P 2024 -rp ./ecosystem.config.js ${{secrets.SSH_USERNAME}}@${{secrets.SSH_ADDRESS}}:/home/gaurav/deployments/netflix-search-server/;
+            scp -i ./id_rsa -P 2024 -rp ./deploy.sh ${{secrets.SSH_USERNAME}}@${{secrets.SSH_ADDRESS}}:/home/gaurav/deployments/netflix-search-server/;
+        - name: Final step - Deploying...Serving static page
+          run:
+            ssh -i ./id_rsa ${{secrets.SSH_USERNAME}}@${{secrets.SSH_ADDRESS}} -p 2024 'source ~/.bashrc';        
+            ssh -i ./id_rsa ${{secrets.SSH_USERNAME}}@${{secrets.SSH_ADDRESS}} -p 2024 'cd /home/gaurav/deployments/netflix-search-server; chmod 777 ./deploy.sh; ./deploy.sh';        
