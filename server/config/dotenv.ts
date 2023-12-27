@@ -4,14 +4,18 @@ import validator from "validator";
 const _env = config().parsed;
 
 const envSchema = z.object({
-  NODE_ENV: z.enum(["development", "production", "testing"]),
-  PORT: z.string().refine(validator.isNumeric, "Must be a number"),
-  API_KEY: z.string(),
+  NODE_ENV: z.enum(["development", "production", "testing"], {
+    required_error: "NODE_ENV is required",
+  }),
+  PORT: z
+    .string({ required_error: "PORT is required" })
+    .refine(validator.isNumeric, "Must be a number"),
+  API_KEY: z.string({ required_error: "API_KEY is required" }),
 });
 
 function parseEnvFile() {
   try {
-    return envSchema.parse(_env);
+    return envSchema.parse(_env || {});
   } catch (error) {
     const _error = error as ZodError;
     console.log("Error in the .env file", JSON.parse(_error.message));
