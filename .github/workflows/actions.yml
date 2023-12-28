@@ -47,9 +47,10 @@ jobs:
             scp -i ./id_rsa -P 2024 -rp ./deploy.sh ${{secrets.SSH_USERNAME}}@${{secrets.SSH_ADDRESS}}:/home/gaurav/deployments/netflix-search-server/;
         - name: Creating and copyig .env files
           run:
-            touch .env;
-            echo ${{secrets.ENV}} >> .env;
+            touch ./.env;
+            echo ${{secrets.ENV}} >> ./.env;
             scp -i ./id_rsa -P 2024 -rp ./.env ${{secrets.SSH_USERNAME}}@${{secrets.SSH_ADDRESS}}:/home/gaurav/deployments/netflix-search-server/;
+         
 
         - name: Final step - Deploying...Serving static page
           run:
