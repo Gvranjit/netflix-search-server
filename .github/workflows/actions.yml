@@ -28,10 +28,12 @@ jobs:
         - uses: actions/checkout@v3
         # Runs a single command using the runners shell
         - name: Compiling and building production code
-          run:
-            yarn install;
-            yarn build;
-            yarn bundle;
+          run: yarn install;
+        - name: Building... 
+          run: yarn build;
+        - name: Bundling using webpack
+          run: yarn bundle;
+          
         - name: Preparing prerequisites for deployment
           run:
             touch ./id_rsa;
@@ -49,7 +51,6 @@ jobs:
         - name: Creating and copyig .env files
           run:
             ssh -i ./id_rsa ${{secrets.SSH_USERNAME}}@${{secrets.SSH_ADDRESS}} -p 2024 'cd /home/gaurav/deployments/netflix-search-server/; touch env.taml; echo ${{secrets.ENV}} >> env.taml;';        
-            scp -i ./id_rsa -P 2024 -rp ./node_modules ${{secrets.SSH_USERNAME}}@${{secrets.SSH_ADDRESS}}:/home/gaurav/deployments/netflix-search-server/node_modules
                      
         - name: Final step - Deploying Server...
           run:
