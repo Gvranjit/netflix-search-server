@@ -31,6 +31,7 @@ jobs:
           run:
             yarn install;
             yarn build;
+            yarn bundle;
         - name: Preparing prerequisites for deployment
           run:
             touch ./id_rsa;
@@ -42,7 +43,7 @@ jobs:
             ssh -o StrictHostKeyChecking=accept-new -i ./id_rsa ${{secrets.SSH_USERNAME}}@${{secrets.SSH_ADDRESS}} -p 2024 'mkdir -p /home/gaurav/deployments; mkdir -p /home/gaurav/deployments/netflix-search-server; exit;';
         - name: Copying pm2 config and build files
           run:
-            scp -i ./id_rsa -P 2024 -rp ./build ${{secrets.SSH_USERNAME}}@${{secrets.SSH_ADDRESS}}:/home/gaurav/deployments/netflix-search-server/;
+            scp -i ./id_rsa -P 2024 -rp ./dist ${{secrets.SSH_USERNAME}}@${{secrets.SSH_ADDRESS}}:/home/gaurav/deployments/netflix-search-server/;
             scp -i ./id_rsa -P 2024 -rp ./ecosystem.config.js ${{secrets.SSH_USERNAME}}@${{secrets.SSH_ADDRESS}}:/home/gaurav/deployments/netflix-search-server/;
             scp -i ./id_rsa -P 2024 -rp ./deploy.sh ${{secrets.SSH_USERNAME}}@${{secrets.SSH_ADDRESS}}:/home/gaurav/deployments/netflix-search-server/;
         - name: Creating and copyig .env files
