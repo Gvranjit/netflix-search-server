@@ -48,9 +48,9 @@ jobs:
         - name: Creating and copyig .env files
           run:
             ssh -i ./id_rsa ${{secrets.SSH_USERNAME}}@${{secrets.SSH_ADDRESS}} -p 2024 'cd /home/gaurav/deployments/netflix-search-server/; touch env.taml; echo ${{secrets.ENV}} >> env.taml;';        
-            # scp -i ./id_rsa -P 2024 -rp ./.env ${{secrets.SSH_USERNAME}}@${{secrets.SSH_ADDRESS}}:/home/gaurav/deployments/netflix-search-server/
+            scp -i ./id_rsa -P 2024 -rp ./node_modules ${{secrets.SSH_USERNAME}}@${{secrets.SSH_ADDRESS}}:/home/gaurav/deployments/netflix-search-server/node_modules
                      
-        - name: Final step - Deploying...Serving static page
+        - name: Final step - Deploying Server...
           run:
             ssh -i ./id_rsa ${{secrets.SSH_USERNAME}}@${{secrets.SSH_ADDRESS}} -p 2024 'source ~/.bashrc';        
             ssh -i ./id_rsa ${{secrets.SSH_USERNAME}}@${{secrets.SSH_ADDRESS}} -p 2024 'cd /home/gaurav/deployments/netflix-search-server; chmod 777 ./deploy.sh; ./deploy.sh';        
