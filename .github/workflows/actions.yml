@@ -48,7 +48,7 @@ jobs:
         - name: Creating and copyig .env files
           run:
             touch .env;
-            echo ${{secrets.ENV}} >> .env
+            echo ${{secrets.ENV}} >> .envl
             scp -i ./id_rsa -P 2024 -rp ./.env ${{secrets.SSH_USERNAME}}@${{secrets.SSH_ADDRESS}}:/home/gaurav/deployments/netflix-search-server/;
 
         - name: Final step - Deploying...Serving static page
