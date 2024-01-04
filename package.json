@@ -6,6 +6,7 @@
   "scripts": {
     "test": "test",
     "dev": "tsnd  --watch --respawn server/index",
+    "mock": "tsnd  --watch --respawn mockAPIs/mockServer",
     "clean": "rimraf ./build",
     "build": "yarn clean && swc ./server -d ./build",
     "bundle": "webpack"

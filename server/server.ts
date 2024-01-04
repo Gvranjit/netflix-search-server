@@ -1,5 +1,6 @@
 import express, { Response, Request, NextFunction } from "express";
 import searchRoutes from "./routes/search.routes";
+import { env } from "./config/dotenv";
 
 const app = express();
 const server = {
@@ -11,8 +12,8 @@ const server = {
         res.status(400).send(err.message);
       }
     );
-    app.listen(9000, () => {
-      console.log("Now listening on port 9000");
+    app.listen(env.PORT, () => {
+      console.log("Now listening on port:", +env.PORT);
     });
   },
 };
